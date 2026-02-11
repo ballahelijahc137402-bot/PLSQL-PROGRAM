@@ -1,0 +1,13 @@
+-- simple interest
+set SERVEROUTPUT ON
+DECLARE
+SI NUMBER;
+P NUMBER:=500;
+R NUMBER:=10;
+N NUMBER:=5;
+
+BEGIN
+    SI:=(P*R*N)/100;
+    DBMS_OUTPUT.PUT_LINE(SI);
+    END;
+    /
