@@ -1,55 +1,40 @@
-        
+CREATE TABLE NEWEMP AS
+SELECT * FROM EMP WHERE 1=2;
 
-CREATE OR REPLACE PROCEDURE search_employee 
+CREATE OR REPLACE TRIGGER copy_to_newemp
+AFTER INSERT
+ON EMP
+FOR EACH ROW
+BEGIN
+    INSERT INTO NEWEMP
+    (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+    VALUES
+    (
+        :NEW.EMPNO,
+        :NEW.ENAME,
+        :NEW.JOB,
+        :NEW.MGR,
+        :NEW.HIREDATE,
+        :NEW.SAL,
+        :NEW.COMM,
+        :NEW.DEPTNO
+    );
 
-( 
+    
+    DBMS_OUTPUT.PUT_LINE('Record Copied to NEWEMP Table!');
+    DBMS_OUTPUT.PUT_LINE('EmpNo : ' || :NEW.EMPNO);
+    DBMS_OUTPUT.PUT_LINE('Name  : ' || :NEW.ENAME);
+    DBMS_OUTPUT.PUT_LINE('Job   : ' || :NEW.JOB);
+    DBMS_OUTPUT.PUT_LINE('Sal   : ' || :NEW.SAL);
+    DBMS_OUTPUT.PUT_LINE('Dept  : ' || :NEW.DEPTNO);
+   
 
-    p_empno   IN  EMP.EMPNO%TYPE, 
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: Record already exists in NEWEMP Table!');
 
-    p_ename   OUT EMP.ENAME%TYPE, 
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Unexpected Error: ' || SQLERRM);
 
-    p_status  OUT VARCHAR2 
-
-) 
-
-AS 
-
-BEGIN 
-
-    -- Search for employee by ID 
-
-    SELECT ENAME INTO p_ename 
-
-    FROM EMP 
-
-    WHERE EMPNO = p_empno; 
-
-  
-
-    -- If found 
-
-    p_status := 'SUCCESS: Employee Found!'; 
-
-  
-
-EXCEPTION 
-
-    WHEN NO_DATA_FOUND THEN 
-
-        p_ename  := NULL; 
-
-        p_status := 'ERROR: Employee ID ' || p_empno || ' does not exist in the table!'; 
-
-  
-
-    WHEN OTHERS THEN 
-
-        p_ename  := NULL; 
-
-        p_status := 'ERROR: ' || SQLERRM; 
-
-  
-
-END search_employee; 
-
-/ 
+END copy_to_newemp;
+/

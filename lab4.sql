@@ -1,43 +1,39 @@
-CREATE OR REPLACE FUNCTION get_square 
+CREATE TABLE NEWEMP AS
+SELECT * FROM EMP WHERE 1=2;
 
-( 
+CREATE OR REPLACE TRIGGER backup_on_update
+AFTER UPDATE
+ON EMP
+FOR EACH ROW
+BEGIN
+    INSERT INTO NEWEMP
+    (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+    VALUES
+    (
+        :OLD.EMPNO,
+        :OLD.ENAME,
+        :OLD.JOB,
+        :OLD.MGR,
+        :OLD.HIREDATE,
+        :OLD.SAL,
+        :OLD.COMM,
+        :OLD.DEPTNO
+    );
 
-    p_number IN NUMBER 
+    DBMS_OUTPUT.PUT_LINE('Old Record Backed Up in NEWEMP Table!');
+    DBMS_OUTPUT.PUT_LINE('EmpNo    : ' || :OLD.EMPNO);
+    DBMS_OUTPUT.PUT_LINE('Name     : ' || :OLD.ENAME);
+    DBMS_OUTPUT.PUT_LINE('Job      : ' || :OLD.JOB);
+    DBMS_OUTPUT.PUT_LINE('Old Sal  : ' || :OLD.SAL);
+    DBMS_OUTPUT.PUT_LINE('New Sal  : ' || :NEW.SAL);
+    DBMS_OUTPUT.PUT_LINE('Dept     : ' || :OLD.DEPTNO);
 
-) 
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: Record already exists in NEWEMP Table!');
 
-RETURN NUMBER 
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Unexpected Error: ' || SQLERRM);
 
-AS 
-
-    v_square NUMBER; 
-
-BEGIN 
-
-    -- Calculate square of the number 
-
-    v_square := p_number * p_number; 
-
-  
-
-    -- Return the result 
-
-    RETURN v_square; 
-
-  
-
-EXCEPTION 
-
-    WHEN OTHERS THEN 
-
-        DBMS_OUTPUT.PUT_LINE('Error Occurred: ' || SQLERRM); 
-
-        RETURN NULL; 
-
-  
-
-END get_square; 
-
-/ 
-
- 
+END backup_on_update;
+/
