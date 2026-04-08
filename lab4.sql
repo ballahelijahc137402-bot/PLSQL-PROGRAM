@@ -1,26 +1,43 @@
---Write a PL/SQL block to display the salary of that employee
---whose age is 50 years otherwise display appropriate message
---using exception handling.
+CREATE OR REPLACE FUNCTION get_square 
 
-SET SERVEROUTPUT ON
-DECLARE
- v_name VARCHAR2(50);
- v_salary NUMBER;
- v_age NUMBER;
-BEGIN
- SELECT emp_name, basic_salary, age
- INTO v_name, v_salary, v_age
- FROM EMPLOYEE
- WHERE age = 50;
- DBMS_OUTPUT.PUT_LINE('Employee Name : ' || v_name);
- DBMS_OUTPUT.PUT_LINE('Age : ' || v_age);
- DBMS_OUTPUT.PUT_LINE('Basic Salary : ' || v_salary);
-EXCEPTION
- WHEN NO_DATA_FOUND THEN
- DBMS_OUTPUT.PUT_LINE('No employee found with age 50!');
- WHEN TOO_MANY_ROWS THEN
- DBMS_OUTPUT.PUT_LINE('Multiple employees found with age 50!');
- WHEN OTHERS THEN
- DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
-END;
-/
+( 
+
+    p_number IN NUMBER 
+
+) 
+
+RETURN NUMBER 
+
+AS 
+
+    v_square NUMBER; 
+
+BEGIN 
+
+    -- Calculate square of the number 
+
+    v_square := p_number * p_number; 
+
+  
+
+    -- Return the result 
+
+    RETURN v_square; 
+
+  
+
+EXCEPTION 
+
+    WHEN OTHERS THEN 
+
+        DBMS_OUTPUT.PUT_LINE('Error Occurred: ' || SQLERRM); 
+
+        RETURN NULL; 
+
+  
+
+END get_square; 
+
+/ 
+
+ 
